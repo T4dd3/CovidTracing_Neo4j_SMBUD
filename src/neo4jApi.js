@@ -24,6 +24,7 @@ console.log(`Database running at ${neo4jUri}`)
 
 function executeQuery() {
   const session = driver.session({database: database});
+  
   return session.readTransaction((tx) => 
       tx.run('match(person:Person) return person')
     )
