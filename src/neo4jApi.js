@@ -104,22 +104,22 @@ function voteInMovie(title) {
 function myGetGraph() {
   const session = driver.session({database: database});
   return session.readTransaction((tx) =>
-    tx.run('MATCH (p:Person)<-[:ACTED_IN]-(a:Person) \
+    tx.run('MATCH (p:Person)<-[:KNOWS]-(a:Person) \
     RETURN p.name AS p, collect(a.name) AS known \
     LIMIT $limit', {limit: neo4j.int(100)}))
     .then(results => {
       const nodes = [], rels = [];
       let i = 0;
       results.records.forEach(res => {
-        nodes.push({title: res.get('movie'), label: 'movie'});
+        nodes.push({name: res.get('p'), label: 'person'});
         const target = i;
         i++;
 
-        res.get('cast').forEach(name => {
-          const actor = {title: name, label: 'actor'};
-          let source = _.findIndex(nodes, actor);
+        res.get('known').forEach(name => {
+          const knownPerson = {name: name, label: 'person'};
+          let source = _.findIndex(nodes, knownPerson);
           if (source === -1) {
-            nodes.push(actor);
+            nodes.push(knownPerson);
             source = i;
             i++;
           }
@@ -178,3 +178,4 @@ exports.getMovie = getMovie;
 exports.getGraph = getGraph;
 exports.voteInMovie = voteInMovie;
 exports.executeQuery = executeQuery;
+exports.myGetGraph = myGetGraph;
