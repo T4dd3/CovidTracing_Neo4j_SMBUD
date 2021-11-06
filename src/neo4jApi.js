@@ -2,6 +2,7 @@ require('file-loader?name=[name].[ext]!../node_modules/neo4j-driver/lib/browser/
 const Movie = require('./models/Movie');
 const MovieCast = require('./models/MovieCast');
 const _ = require('lodash');
+const Person = require('./models/Person');
 
 const neo4j = window.neo4j;
 const neo4jUri = process.env.NEO4J_URI;
@@ -24,16 +25,12 @@ console.log(`Database running at ${neo4jUri}`)
 function executeQuery() {
   const session = driver.session({database: database});
   return session.readTransaction((tx) => 
-      tx.run('match(n) return n')
-      /*tx.run('MATCH (movie:Movie) \
-      WHERE movie.title =~ $title \
-      RETURN movie',
-      {title: '(?i).*' + queryString + '.*'})*/
+      tx.run('match(person:Person) return person')
     )
     .then(result => {
-      return result;
-      return result.records.map(record => {
-        return new Movie(record.get('movie'));
+      // Each record will have a person associated, I'll get that person
+      return result.records.map(recordFromDB => {
+        return new Person(recordFromDB.get("person"));
       });
     })
     .catch(error => {

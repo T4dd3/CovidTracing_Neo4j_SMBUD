@@ -14,9 +14,10 @@ $(function () {
 
 function executeQuery()
 {
-  var ritorno = api.executeQuery();
-  alert(ritorno);
-  console.log(ritorno);
+  api.executeQuery().then(persons => {
+    // I receive a list of persons
+    console.log(persons);
+  });
 }
 
 function showMovie(title) {
