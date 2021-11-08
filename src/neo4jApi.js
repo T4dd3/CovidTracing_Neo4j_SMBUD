@@ -29,9 +29,24 @@ function createDB()
   const creationTx = session.beginTransaction();
 
   var stats = {};
-  stats.deletion = creationTx.run('MATCH(n) DETACH DELETE n;');;
-  stats.nodes = creationTx.run('CREATE (ma:Person { name: "Mark" }), (mi:Person { name: "Mike" }), (ee:Person { name: "Francis", from: "Italy", klout: 99});');
-  stats.relations = creationTx.run('MATCH (a:Person), (b:Person) WHERE NOT (a)-[:KNOWS]->(b) CREATE (a)-[:KNOWS]->(b), (b)-[:KNOWS]->(a);');
+  stats.deletion = creationTx.run('MATCH(n) DETACH DELETE n;');
+  stats.nodePerson = creationTx.run("LOAD CSV FROM 'https://download1507.mediafire.com/0j5aj2jlsrug/fx3w3c8jumwe2at/PersonData.csv' AS line \
+    CREATE (:Person {ssn:line[1], name: line[2], lastname: line[3], email: line[4], gender: line[5],birth_date: date(line[6]), address:line[7], phone_number: toInteger(line[8])});");
+  stats.nodeSwab = creationTx.run("LOAD CSV FROM 'https://download1582.mediafire.com/18buctmcl3bg/9c0kviw4rbxxp9d/SwabData.csv' AS line \
+  CREATE (:Swab {type: date(line[1]), outcome: line[2], type: line[3]});");
+  stats.nodeVaccine = creationTx.run("LOAD CSV FROM 'https://download1493.mediafire.com/y1s70ssk9esg/mg6lfkrtm736fqe/Vaccine.csv' AS line \
+  CREATE (:VaccineShot {type:line[1], date: date(line[2]), numberOfTheShot: toInteger(line[3]), lot:line[4]});");
+  stats.nodeActivity = creationTx.run("LOAD CSV FROM 'https://download1084.mediafire.com/8kyuh0u2vyig/fmo8y8p8671iaej/Activity.csv' AS line \
+  CREATE (:Activity {type:line[1], description: line[2], averageDuration: toInteger(line[3]), endTime: time(line[4]), address: line[5]});");
+  stats.relPersonSwab = creationTx.run("match (p:Person),(s:Swab) with p,s limit 500000000 where rand() < 0.002 merge (p)-[:TAKES]->(s);");
+    // stats.nodes = creationTx.run('CREATE (ma:Person { name: "Mark" }), (mi:Person { name: "Mike" }), (ee:Person { name: "Francis", from: "Italy", klout: 99});');
+  // stats.relations = creationTx.run('MATCH (a:Person), (b:Person) WHERE NOT (a)-[:KNOWS]->(b) CREATE (a)-[:KNOWS]->(b), (b)-[:KNOWS]->(a);');
+  stats.relPersonFirstVaccine = creationTx.run("WITH range(1,1) as VaccineRange MATCH (v:VaccineShot) where v.numberOfTheShot = 1 WITH collect(v) as vaccines, VaccineRange MATCH (p:Person) where rand() < 0.8  WITH p, apoc.coll.randomItems(vaccines, apoc.coll.randomItem(VaccineRange)) as vaccines  FOREACH (x in vaccines | CREATE (p)-[:GETS]->(x))");
+  stats.relPersonSecondVaccine = creationTx.run("WITH range(1,1) as VaccineRange MATCH (v:VaccineShot) where v.numberOfTheShot= 2 WITH collect(v) as vaccines, VaccineRange MATCH (p:Person)-[:GETS]->(v1:VaccineShot) where rand() < 0.5 and v1.numberOfTheShot= 1  WITH p, apoc.coll.randomItems(vaccines, apoc.coll.randomItem(VaccineRange)) as vaccines  FOREACH (x in vaccines | CREATE (p)-[:GETS]->(x))");
+  stats.relPersonThirdVaccine = creationTx.run("WITH range(1,1) as VaccineRange MATCH (v:VaccineShot) where v.numberOfTheShot = 3 WITH collect(v) as vaccines, VaccineRange MATCH (p:Person)-[:GETS]->(v1:VaccineShot) where rand() < 0.1 and v1.numberOfTheShot= 2  WITH p, apoc.coll.randomItems(vaccines, apoc.coll.randomItem(VaccineRange)) as vaccines  FOREACH (x in vaccines | CREATE (p)-[:GETS]->(x))");
+  stats.relLivesWith = creationTx.run("match (p1:Person),(p2:Person)  with p1,p2  limit 1500000000   where p1.name<>p2.name and p1.address = p2.address    merge (p1)<-[:LIVES_WITH]->(p2);");
+  stats.relAppRegisteredContact = creationTx.run("match (p1:Person),(p2:Person),(d:Date)  with p1,p2,d  limit 1500000   where rand()<0.0003 and p2.name<>p1.name    merge (p1)<-[:APP_REGISTERED_CONTACT{date:d.date,time:d.time}]->(p2);");
+  stats.relTakesPartIn = creationTx.run("match (p:Person),(a:Activity),(d:Date)  with p,a,d  limit 1500000   where rand()<0.0003     merge (p)<-[:TAKES_PART_IN{date:d.date,time:d.time}]->(a);");
 
   return creationTx.commit().then(() => { return stats; }).
     catch(error => { throw error; }).
