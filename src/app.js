@@ -6,14 +6,14 @@ $(function () {
  // search();
 
   $("#search").submit(e => {
-    console.log("ciao");
+    //console.log("ciao");
     e.preventDefault();
     //search();
     executeQuery();
   });
 
   $("#dbCreation").submit(e => {
-    console.log("ciao");
+   // console.log("ciaooo");
     e.preventDefault();
     createDB();
   });
@@ -34,18 +34,18 @@ function createDB()
 // Function that executes query
 function executeQuery()
 {
-  console.log("ciao");
+ //console.log("ciao");
   var selectedQuery = document.getElementById("search");
   //Default Label Swab
 
   if(selectedQuery=="HR"){
     //If I choose HR query I will set visability=false for the swab Label and se visability= true for the HR Label
-    document.getElementsByClassName("results")[1].style.display ="none";
-    
+    document.getElementsByClassName("row")[1].style.display ="none";
+ 
 
   }
   
-  api.executeQuery(selectedQuery).then(persons => {
+  api.executeQuery().then(persons => {
     // I receive a list of persons
     console.log(persons);
   });
@@ -57,15 +57,22 @@ function executeQuery()
 
 function showLabel(){
  //document.getElementById(1).style.display ="none";
- document.getElementsByClassName("row")[1].style.display ="none";
+ //document.getElementsByClassName("row")[1].style.display ="none";
   var selectedQuery = document.forms.query.value;
-  //Default Label Swab
+
 
   if(selectedQuery=="HR"){
-    //If I choose HR query I will set visability=false for the swab Label and se visability= true for the HR Label
-    document.getElementsByClassName("row")[1].style.display ="none";
- 
+    var parametersHR = {};
+    parametersHR.ssn = document.getElementById("InputHR").getElementById("SSN_HR");
 
+  }
+  if(selectedQuery=="SB"){
+    var parametersSB = {};
+    parametersSB.ssn = document.getElementById("InputSB").getElementById("SSN_SB");
+    parametersSB.date = document.getElementById("InputSB").getElementById("Date_SB");
+    parametersSB.type = document.getElementById("InputSB").getElementById("Type_SB");
+    parametersSB.outcome = document.getElementById("InputSB").getElementById("Outcome_SB");
+  
   }
 }
 
