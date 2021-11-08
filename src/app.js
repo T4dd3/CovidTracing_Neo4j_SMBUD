@@ -40,8 +40,8 @@ function executeQuery()
 
   if(selectedQuery=="HR"){
     //If I choose HR query I will set visability=false for the swab Label and se visability= true for the HR Label
-    document.getElementsByClassName("results")[1].style.display ="none";
-    
+    document.getElementById("insertSwab").style.display ="none";
+    document.getElementById("insertSwab").style.display ="none";
 
   }
   
