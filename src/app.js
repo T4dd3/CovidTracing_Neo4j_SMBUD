@@ -22,6 +22,10 @@ function createDB()
 {
   api.createDB().then(res => {
     console.log(res);
+    alert("Database successfully created and initialized!");
+    renderGraph();
+    // In res ci sono tutte le statistiche delle query (nodi creati, relazioni create, label aggiunte,..), ogni proprietà è una query che è stata eseguita
+    // res.nodePersons._p.then((res) => console.log(res.summary.counters._stats))
   })
 }
 
@@ -139,48 +143,4 @@ function renderGraph() {
         });
       });
   });
-  /*
-  api
-    .getGraph()
-    .then(graph => {
-      force.nodes(graph.nodes).links(graph.links).start();
-
-      const link = svg.selectAll(".link")
-        .data(graph.links).enter()
-        .append("line").attr("class", "link");
-
-      const node = svg.selectAll(".node")
-        .data(graph.nodes).enter()
-        .append("circle")
-        .attr("class", d => {
-          return "node " + d.label
-        })
-        .attr("r", 10)
-        .call(force.drag);
-
-      // html title attribute
-      node.append("title")
-        .text(d => {
-          return d.title;
-        });
-
-      // force feed algo ticks
-      force.on("tick", () => {
-        link.attr("x1", d => {
-          return d.source.x;
-        }).attr("y1", d => {
-          return d.source.y;
-        }).attr("x2", d => {
-          return d.target.x;
-        }).attr("y2", d => {
-          return d.target.y;
-        });
-
-        node.attr("cx", d => {
-          return d.x;
-        }).attr("cy", d => {
-          return d.y;
-        });
-      });
-    }); */
 }
