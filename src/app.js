@@ -40,12 +40,12 @@ function executeQuery()
 
   if(selectedQuery=="HR"){
     //If I choose HR query I will set visability=false for the swab Label and se visability= true for the HR Label
-    document.getElementsByClassName("row")[1].style.display ="none";
- 
+    document.getElementsByClassName("results")[1].style.display ="none";
+    
 
   }
   
-  api.executeQuery().then(persons => {
+  api.executeQuery(selectedQuery).then(persons => {
     // I receive a list of persons
     console.log(persons);
   });

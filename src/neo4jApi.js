@@ -87,11 +87,11 @@ function createDB()
 
 
 /* To execute query requested by the user and return a response */
-function executeQuery() {
+function executeQuery(queryToExecute, parameters) {
   const session = driver.session({database: database});
   
   return session.readTransaction((tx) => 
-      tx.run('match(person:Person) return person')
+      tx.run('MATCH (P1:Person)-[LW:LIVES_WITH]-(P2:Person) WHERE P1.ssn = '+parameters.ssn+' AND P2.ssn<>P1.ssn AND LW.endDate IS NULL OR duration.inDays(LW.endDate,'+parameters.swabDate+').days <= 14 RETURN P2')
     )
     .then(result => {
       // Each record will have a person associated, I'll get that person
