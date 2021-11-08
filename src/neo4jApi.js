@@ -39,6 +39,8 @@ function createDB()
   stats.nodeActivity = creationTx.run("LOAD CSV FROM 'https://download1084.mediafire.com/8kyuh0u2vyig/fmo8y8p8671iaej/Activity.csv' AS line \
   CREATE (:Activity {type:line[1], description: line[2], averageDuration: toInteger(line[3]), endTime: time(line[4]), address: line[5]});");
   stats.relPersonSwab = creationTx.run("match (p:Person),(s:Swab) with p,s limit 500000000 where rand() < 0.002 merge (p)-[:TAKES]->(s);");
+  stats.dates = creationTx.run("LOAD CSV FROM 'https://download850.mediafire.com/ei8v6eu1qnkg/wfp7p7d7cl4o1gj/Date.csv' AS line \
+    CREATE (:Date {date: date(line[1]),time:time(line[2])})");
     // stats.nodes = creationTx.run('CREATE (ma:Person { name: "Mark" }), (mi:Person { name: "Mike" }), (ee:Person { name: "Francis", from: "Italy", klout: 99});');
   // stats.relations = creationTx.run('MATCH (a:Person), (b:Person) WHERE NOT (a)-[:KNOWS]->(b) CREATE (a)-[:KNOWS]->(b), (b)-[:KNOWS]->(a);');
   stats.relPersonFirstVaccine = creationTx.run("WITH range(1,1) as VaccineRange MATCH (v:VaccineShot) where v.numberOfTheShot = 1 WITH collect(v) as vaccines, VaccineRange MATCH (p:Person) where rand() < 0.8  WITH p, apoc.coll.randomItems(vaccines, apoc.coll.randomItem(VaccineRange)) as vaccines  FOREACH (x in vaccines | CREATE (p)-[:GETS]->(x))");
@@ -47,7 +49,7 @@ function createDB()
   stats.relLivesWith = creationTx.run("match (p1:Person),(p2:Person)  with p1,p2  limit 1500000000   where p1.name<>p2.name and p1.address = p2.address    merge (p1)<-[:LIVES_WITH]->(p2);");
   stats.relAppRegisteredContact = creationTx.run("match (p1:Person),(p2:Person),(d:Date)  with p1,p2,d  limit 1500000   where rand()<0.0003 and p2.name<>p1.name    merge (p1)<-[:APP_REGISTERED_CONTACT{date:d.date,time:d.time}]->(p2);");
   stats.relTakesPartIn = creationTx.run("match (p:Person),(a:Activity),(d:Date)  with p,a,d  limit 1500000   where rand()<0.0003     merge (p)<-[:TAKES_PART_IN{date:d.date,time:d.time}]->(a);");
-
+  
   return creationTx.commit().then(() => { return stats; }).
     catch(error => { throw error; }).
     finally(() => { return session.close(); });
@@ -167,7 +169,7 @@ function voteInMovie(title) {
 function myGetGraph() {
   const session = driver.session({database: database});
   return session.readTransaction((tx) =>
-    tx.run('MATCH (p:Person)<-[:KNOWS]-(a:Person) \
+    tx.run('MATCH (p:Person)<-[:APP_REGISTERED_CONTACT]-(a:Person) \
     RETURN p.name AS p, collect(a.name) AS known \
     LIMIT $limit', {limit: neo4j.int(100)}))
     .then(results => {
