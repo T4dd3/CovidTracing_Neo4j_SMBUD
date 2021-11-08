@@ -3,15 +3,17 @@ const api = require('./neo4jApi');
 
 $(function () {
   renderGraph();
-  search();
+ // search();
 
   $("#search").submit(e => {
+    console.log("ciao");
     e.preventDefault();
-    search();
+    //search();
     executeQuery();
   });
 
   $("#dbCreation").submit(e => {
+    console.log("ciao");
     e.preventDefault();
     createDB();
   });
@@ -28,10 +30,39 @@ function createDB()
 // Function that executes query
 function executeQuery()
 {
+  console.log("ciao");
+  var selectedQuery = document.getElementById("search");
+  //Default Label Swab
+
+  if(selectedQuery=="HR"){
+    //If I choose HR query I will set visability=false for the swab Label and se visability= true for the HR Label
+    document.getElementsByClassName("row")[1].style.display ="none";
+ 
+
+  }
+  
   api.executeQuery().then(persons => {
     // I receive a list of persons
     console.log(persons);
   });
+
+
+}
+
+//Function that show the filling Label based on the combo's choice
+
+function showLabel(){
+ //document.getElementById(1).style.display ="none";
+ document.getElementsByClassName("row")[1].style.display ="none";
+  var selectedQuery = document.forms.query.value;
+  //Default Label Swab
+
+  if(selectedQuery=="HR"){
+    //If I choose HR query I will set visability=false for the swab Label and se visability= true for the HR Label
+    document.getElementsByClassName("row")[1].style.display ="none";
+ 
+
+  }
 }
 
 function showMovie(title) {
