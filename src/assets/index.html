@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html lang="en">
-    
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -20,14 +19,17 @@
                     <li>
                         <form role="search" class="navbar-form" id="search">
                             <div class="form-group">
-                                <input type="text" value="Matrix" placeholder="Search for Movie Title" class="form-control" name="search">
+                                <select id="queryToExecute" class="form-control" name="query">
+                                    <option>List all the contacts between person identified by app</option>
+                                </select>
+                                <!--<input type="text" value="Matrix" placeholder="Search for Movie Title" class="form-control" name="search"> -->
                             </div>
-                            <!-- Combo box con  scelta della query da eseguire-->
-                            <select id="queryToExecute">
-                                <option>Insert a new Swab</option>
-                                <option>Find all of the subject's high-risk contacts</option>
-                            </select>
                             <button class="btn btn-default" type="submit">Execute</button>
+                        </form>
+                    </li>
+                    <li>
+                        <form role="dbCreation" class="navbar-form" id="dbCreation">
+                            <button class="btn btn-default" type="submit">Create or re-initialize database</button>
                         </form>
                     </li>
                 </ul>
@@ -49,30 +51,11 @@
 <div class="row">
     <div class="col-md-5">
         <div class="panel panel-default">
-            <div class="panel-heading">Fill the Label to execute the query</div>
-            <table id="Data" class="table table-striped table-hover">
-                <thead>
-                <tr>
-                    <th>SSN Person</th>
-                    <th>Date</th>
-                    <th>Type</th>
-                    <th>Outcome</th>
-                </tr>
-                </thead>
-                <tbody>
-                </tbody>
-            </table>
-        </div>
-    </div>
-
-<div class="row">
-    <div class="col-md-5">
-        <div class="panel panel-default">
             <div class="panel-heading">Query Execution Results</div>
             <table id="results" class="table table-striped table-hover">
                 <thead>
                 <tr>
-                    <th>Movie</th>
+                    <th style="visibility: false;">Movie</th>
                     <th>Released</th>
                     <th>Tagline</th>
                     <th>Votes</th>
@@ -83,7 +66,6 @@
             </table>
         </div>
     </div>
-
     <div class="col-md-7">
         <div class="panel panel-default">
             <div class="panel-heading" id="title">Details</div>

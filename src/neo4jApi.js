@@ -22,6 +22,54 @@ const driver = neo4j.driver(
 
 console.log(`Database running at ${neo4jUri}`)
 
+/* I'll clean the old db and create a new one from csv data*/
+function createDB() 
+{
+  const session = driver.session({database: database});
+  const creationTx = session.beginTransaction();
+
+  var stats = {};
+  stats.deletion = creationTx.run('MATCH(n) DETACH DELETE n;');;
+  stats.nodes = creationTx.run('CREATE (ma:Person { name: "Mark" }), (mi:Person { name: "Mike" }), (ee:Person { name: "Francis", from: "Italy", klout: 99});');
+  stats.relations = creationTx.run('MATCH (a:Person), (b:Person) WHERE NOT (a)-[:KNOWS]->(b) CREATE (a)-[:KNOWS]->(b), (b)-[:KNOWS]->(a);');
+
+  return creationTx.commit().then(() => { return stats; }).
+    catch(error => { throw error; }).
+    finally(() => { return session.close(); });
+
+
+  return session.writeTransaction((tx) => 
+      tx.run('MATCH(n) DETACH DELETE n;')
+    )
+    .then(result => {
+      // Each record will have a person associated, I'll get that person
+      return session.writeTransaction((tx) => 
+      tx.run('CREATE (ma:Person { name: "Mark" }), (mi:Person { name: "Mike" }), (ee:Person { name: "Francis", from: "Italy", klout: 99});')
+      )
+      .then(result => {
+        return session.writeTransaction((tx) => 
+        tx.run('MATCH (a:Person), (b:Person) WHERE NOT (a)-[:KNOWS]->(b) CREATE (a)-[:KNOWS]->(b), (b)-[:KNOWS]->(a);')
+        )
+        .then(result => {
+          // Each record will have a person associated, I'll get that person
+          return result;
+        })
+        .catch(error => {
+          throw error;
+        })
+        .finally(() => {
+          
+        });
+      })
+      .catch(error => { throw error; })
+      .finally(() => {  });
+    })
+    .catch(error => { throw error; })
+    .finally(() => { return session.close(); });
+}
+
+
+/* To execute query requested by the user and return a response */
 function executeQuery() {
   const session = driver.session({database: database});
   
@@ -136,7 +184,7 @@ function myGetGraph() {
       return session.close();
     });
 }
-
+/*
 function getGraph() {
   const session = driver.session({database: database});
   return session.readTransaction((tx) =>
@@ -172,10 +220,10 @@ function getGraph() {
       return session.close();
     });
 }
-
+*/
 exports.searchMovies = searchMovies;
 exports.getMovie = getMovie;
-exports.getGraph = getGraph;
 exports.voteInMovie = voteInMovie;
 exports.executeQuery = executeQuery;
 exports.myGetGraph = myGetGraph;
+exports.createDB = createDB;

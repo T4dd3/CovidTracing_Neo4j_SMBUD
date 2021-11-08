@@ -10,8 +10,22 @@ $(function () {
     search();
     executeQuery();
   });
+
+  $("#dbCreation").submit(e => {
+    e.preventDefault();
+    createDB();
+  });
 });
 
+// Function used to invoke db creation server side
+function createDB() 
+{
+  api.createDB().then(res => {
+    console.log(res);
+  })
+}
+
+// Function that executes query
 function executeQuery()
 {
   api.executeQuery().then(persons => {
