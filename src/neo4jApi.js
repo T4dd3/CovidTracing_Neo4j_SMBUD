@@ -30,16 +30,16 @@ function createDB()
 
   var stats = {};
   stats.deletion = creationTx.run('MATCH(n) DETACH DELETE n;');
-  stats.nodePerson = creationTx.run("LOAD CSV FROM 'https://download1507.mediafire.com/0j5aj2jlsrug/fx3w3c8jumwe2at/PersonData.csv' AS line \
+  stats.nodePerson = creationTx.run("LOAD CSV FROM 'https://cdn.filesend.jp/private/68Y4UingReJyhBmH7Ps3rQ-tbelgXlh11hKaXO2h-RdiVTfH-F_FKQf6Cu9-zlDu/PersonData.csv' AS line \
     CREATE (:Person {ssn:line[1], name: line[2], lastname: line[3], email: line[4], gender: line[5],birth_date: date(line[6]), address:line[7], phone_number: toInteger(line[8])});");
-  stats.nodeSwab = creationTx.run("LOAD CSV FROM 'https://download1582.mediafire.com/18buctmcl3bg/9c0kviw4rbxxp9d/SwabData.csv' AS line \
-  CREATE (:Swab {type: date(line[1]), outcome: line[2], type: line[3]});");
-  stats.nodeVaccine = creationTx.run("LOAD CSV FROM 'https://download1493.mediafire.com/y1s70ssk9esg/mg6lfkrtm736fqe/Vaccine.csv' AS line \
+  stats.nodeSwab = creationTx.run("LOAD CSV FROM 'https://cdn.filesend.jp/private/rNgDy3_f0m2t3276d9LUrmXmll8t4y9QRnyINaVqOR-M4hsEbzTO04-EmlnSFfaK/SwabData.csv' AS line \
+  CREATE (:Swab {date: date(line[2]), outcome: line[3], type: line[1]});");
+  stats.nodeVaccine = creationTx.run("LOAD CSV FROM 'https://cdn.filesend.jp/private/0jvHvnXZbCtjzcmzUYZd_XVfEjW4hcy1BTrOiKmCmUl5XUxekXDcaUkYAH1Dmn05/Vaccine.csv' AS line \
   CREATE (:VaccineShot {type:line[1], date: date(line[2]), numberOfTheShot: toInteger(line[3]), lot:line[4]});");
-  stats.nodeActivity = creationTx.run("LOAD CSV FROM 'https://download1084.mediafire.com/8kyuh0u2vyig/fmo8y8p8671iaej/Activity.csv' AS line \
+  stats.nodeActivity = creationTx.run("LOAD CSV FROM 'https://cdn.filesend.jp/private/TUDQA6cqmOwadKYKqkanrvrNIX-Eemy9quaKsQN05niebsTuUy1HyHCpz0oR-qCb/Activity.csv' AS line \
   CREATE (:Activity {type:line[1], description: line[2], averageDuration: toInteger(line[3]), endTime: time(line[4]), address: line[5]});");
   stats.relPersonSwab = creationTx.run("match (p:Person),(s:Swab) with p,s limit 500000000 where rand() < 0.002 merge (p)-[:TAKES]->(s);");
-  stats.dates = creationTx.run("LOAD CSV FROM 'https://download850.mediafire.com/ei8v6eu1qnkg/wfp7p7d7cl4o1gj/Date.csv' AS line \
+  stats.dates = creationTx.run("LOAD CSV FROM 'https://cdn.filesend.jp/private/lb-o4G0YqdDgduNvXEbu7UJARlHJfN9r2p41P5T8IgS54BcyXPQx5fOP8GaR1orT/Date.csv' AS line \
     CREATE (:Date {date: date(line[1]),time:time(line[2])})");
     // stats.nodes = creationTx.run('CREATE (ma:Person { name: "Mark" }), (mi:Person { name: "Mike" }), (ee:Person { name: "Francis", from: "Italy", klout: 99});');
   // stats.relations = creationTx.run('MATCH (a:Person), (b:Person) WHERE NOT (a)-[:KNOWS]->(b) CREATE (a)-[:KNOWS]->(b), (b)-[:KNOWS]->(a);');
@@ -53,51 +53,38 @@ function createDB()
   return creationTx.commit().then(() => { return stats; }).
     catch(error => { throw error; }).
     finally(() => { return session.close(); });
-
-
-  return session.writeTransaction((tx) => 
-      tx.run('MATCH(n) DETACH DELETE n;')
-    )
-    .then(result => {
-      // Each record will have a person associated, I'll get that person
-      return session.writeTransaction((tx) => 
-      tx.run('CREATE (ma:Person { name: "Mark" }), (mi:Person { name: "Mike" }), (ee:Person { name: "Francis", from: "Italy", klout: 99});')
-      )
-      .then(result => {
-        return session.writeTransaction((tx) => 
-        tx.run('MATCH (a:Person), (b:Person) WHERE NOT (a)-[:KNOWS]->(b) CREATE (a)-[:KNOWS]->(b), (b)-[:KNOWS]->(a);')
-        )
-        .then(result => {
-          // Each record will have a person associated, I'll get that person
-          return result;
-        })
-        .catch(error => {
-          throw error;
-        })
-        .finally(() => {
-          
-        });
-      })
-      .catch(error => { throw error; })
-      .finally(() => {  });
-    })
-    .catch(error => { throw error; })
-    .finally(() => { return session.close(); });
 }
 
 
 /* To execute query requested by the user and return a response */
-function executeQuery(queryToExecute, parameters) {
+function executeQuery(selectedQuery, parameters) {
   const session = driver.session({database: database});
   
-  return session.readTransaction((tx) => 
-      tx.run('MATCH (P1:Person)-[LW:LIVES_WITH]-(P2:Person) WHERE P1.ssn = '+parameters.ssn+' AND P2.ssn<>P1.ssn AND LW.endDate IS NULL OR duration.inDays(LW.endDate,'+parameters.swabDate+').days <= 14 RETURN P2')
-    )
-    .then(result => {
-      // Each record will have a person associated, I'll get that person
-      return result.records.map(recordFromDB => {
-        return new Person(recordFromDB.get("person"));
+  if (selectedQuery == "HR") {
+    return session.readTransaction((tx) =>
+          tx.run('MATCH (p:Person) RETURN p LIMIT(100)')
+          //tx.run('MATCH (P1:Person)-[LW:LIVES_WITH]-(P2:Person) WHERE P1.ssn = '+parameters.ssn+' AND P2.ssn<>P1.ssn AND LW.endDate IS NULL OR duration.inDays(LW.endDate,'+parameters.swabDate+').days <= 14 RETURN P2')
+      )
+      .then(result => {
+          // Each record will have a person associated, I'll get that person
+          return result.records.map(recordFromDB => {
+            return new Person(recordFromDB.get("p"));
+          });
+      })
+      .catch(error => {
+        throw error;
+      })
+      .finally(() => {
+        return session.close();
       });
+  }
+  else if (selectedQuery == "SB") 
+  {
+    return session.writeTransaction((tx) => {
+      tx.run('CREATE (S:Swab {date: date(\''+parameters.date+'\'), outcome: \''+parameters.outcome+'\', type: \''+parameters.type+'\'}) WITH S MATCH (P:Person) WHERE P.ssn = \''+parameters.ssn+'\' MERGE (P)<-[:TAKES]->(S)')
+    })
+    .then(result => {
+        return "Successfully added swab to ssn: " + parameters.ssn;
     })
     .catch(error => {
       throw error;
@@ -105,6 +92,7 @@ function executeQuery(queryToExecute, parameters) {
     .finally(() => {
       return session.close();
     });
+  }
 }
 
 function searchMovies(queryString) {
@@ -169,8 +157,8 @@ function voteInMovie(title) {
 function myGetGraph() {
   const session = driver.session({database: database});
   return session.readTransaction((tx) =>
-    tx.run('MATCH (p:Person)<-[:APP_REGISTERED_CONTACT]-(a:Person) \
-    RETURN p.name AS p, collect(a.name) AS known \
+    tx.run('MATCH (p:Person)-[:APP_REGISTERED_CONTACT]->(a:Person) \
+    RETURN p.name AS p, collect(a.name) AS regContact \
     LIMIT $limit', {limit: neo4j.int(100)}))
     .then(results => {
       const nodes = [], rels = [];
@@ -180,16 +168,17 @@ function myGetGraph() {
         const target = i;
         i++;
 
-        res.get('known').forEach(name => {
-          const knownPerson = {name: name, label: 'person'};
-          let source = _.findIndex(nodes, knownPerson);
+        res.get('regContact').forEach(name => {
+          const regContactPerson = {name: name, label: 'person'};
+          let source = _.findIndex(nodes, regContactPerson);
           if (source === -1) {
-            nodes.push(knownPerson);
+            nodes.push(regContactPerson);
             source = i;
             i++;
           }
           rels.push({source, target})
         })
+        
       });
 
       return {nodes, links: rels};
@@ -201,43 +190,7 @@ function myGetGraph() {
       return session.close();
     });
 }
-/*
-function getGraph() {
-  const session = driver.session({database: database});
-  return session.readTransaction((tx) =>
-    tx.run('MATCH (m:Movie)<-[:ACTED_IN]-(a:Person) \
-    RETURN m.title AS movie, collect(a.name) AS cast \
-    LIMIT $limit', {limit: neo4j.int(100)}))
-    .then(results => {
-      const nodes = [], rels = [];
-      let i = 0;
-      results.records.forEach(res => {
-        nodes.push({title: res.get('movie'), label: 'movie'});
-        const target = i;
-        i++;
 
-        res.get('cast').forEach(name => {
-          const actor = {title: name, label: 'actor'};
-          let source = _.findIndex(nodes, actor);
-          if (source === -1) {
-            nodes.push(actor);
-            source = i;
-            i++;
-          }
-          rels.push({source, target})
-        })
-      });
-
-      return {nodes, links: rels};
-    })
-    .catch(error => {
-      throw error;
-    })
-    .finally(() => {
-      return session.close();
-    });
-}
-*/
 exports.searchMovies = searchMovies;
 exports.getMovie = getMovie;
 exports.voteInMovie = voteInMovie;

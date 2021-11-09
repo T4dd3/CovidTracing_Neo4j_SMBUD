@@ -3,7 +3,13 @@ const api = require('./neo4jApi');
 
 $(function () {
   renderGraph();
+  
  // search();
+  var select = document.getElementById("queryToExecute");
+  select.addEventListener('change', (event) => {
+    changeShowed(event.target.value);
+  });
+  changeShowed(select.value);
 
   $("#search").submit(e => {
     //console.log("ciao");
@@ -25,42 +31,100 @@ function createDB()
   api.createDB().then(res => {
     console.log(res);
     alert("Database successfully created and initialized!");
-    renderGraph();
     // In res ci sono tutte le statistiche delle query (nodi creati, relazioni create, label aggiunte,..), ogni proprietà è una query che è stata eseguita
     // res.nodePersons._p.then((res) => console.log(res.summary.counters._stats))
   })
 }
 
+function ViewHRPagination(){
+    if ($('#navigatorData').length == 0)
+      $('#ViewHRData').after('<div id="navigatorData"></div>');
+    else
+      $('#navigatorData').empty();
+
+    var rowsShown = 10;
+    var rowsTotal = $('#ViewHRData tbody tr').length;
+    var numPages = rowsTotal/rowsShown;
+    
+    for(i = 0;i < numPages;i++) {
+        var pageNum = i + 1;
+        $('#navigatorData').append('<a href="#" rel="'+i+'">'+pageNum+'</a> ');
+    }
+    $('#ViewHRData tbody tr').hide();
+    $('#ViewHRData tbody tr').slice(0, rowsShown).show();
+    $('#navigatorData a:first').addClass('active');
+    $('#navigatorData a').bind('click', function(){
+
+        $('#navigatorData a').removeClass('active');
+        $(this).addClass('active');
+        var currPage = $(this).attr('rel');
+        var startItem = currPage * rowsShown;
+        var endItem = startItem + rowsShown;
+        $('#ViewHRData tbody tr').css('opacity','0.0').hide().slice(startItem, endItem).
+                css('display','table-row').animate({opacity:1}, 300);
+    });
+}
+
 // Function that executes query
 function executeQuery()
 {
- //console.log("ciao");
-  var selectedQuery = document.getElementById("search");
-
+  var selectedQuery = document.getElementById("queryToExecute").value;
+  var parameters = {};
 
   if(selectedQuery=="HR"){
-    //document.getElementsByClassName("row")[1].style.display ="none";
-    var parametersHR = {};
-    parametersHR.ssn = document.getElementById("InputHR").getElementById("SSN_HR");
-
+    var parameters = {};
+    parameters.ssn = document.getElementById("SSN_HR").value;
+    parameters.swabDate = document.getElementById("SwabDate_HR").value;
   }
   if(selectedQuery=="SB"){
-    var parametersSB = {};
-    parametersSB.ssn = document.getElementById("InputSB").getElementById("SSN_SB");
-    parametersSB.date = document.getElementById("InputSB").getElementById("Date_SB");
-    parametersSB.type = document.getElementById("InputSB").getElementById("Type_SB");
-    parametersSB.outcome = document.getElementById("InputSB").getElementById("Outcome_SB");
-  
+    var parameters = {};
+    parameters.ssn = document.getElementById("SSN_SB").value;
+    parameters.date = document.getElementById("Date_SB").value;
+    parameters.type = document.getElementById("Type_SB").value;
+    parameters.outcome = document.getElementById("Outcome_SB").value;
   }
-  api.executeQuery().then(persons => {
+  console.log(selectedQuery, parameters);
+  api.executeQuery(selectedQuery, parameters).then(result => {
+    if(selectedQuery=="HR"){
+      document.getElementById("bodyTableHRView").innerHTML = "";
+      result.forEach(val => {
+        //sconsole.log(val);
+        document.getElementById("bodyTableHRView").innerHTML += "<tr> \
+            <td>"+val.ssn+"</td> \
+            <td>"+val.name+"</td> \
+            <td>"+val.lastname+"</td> \
+            <td>"+val.birth_date.day+"/"+val.birth_date.month+"/"+val.birth_date.year+"</td> \
+            <td>"+val.address+"</td> \
+            <td>"+val.phone_number+"</td> \
+            <td>"+val.email+"</td> \
+        </tr>"
+      });
+      ViewHRPagination();
+    }
+    else if (selectedQuery == "SB")
+      alert(result);
     // I receive a list of persons
-    console.log(persons);
+    //console.log(result);
   });
 
 
 }
 
-
+//Function that show the filling Label based on the combo's choice
+function changeShowed(selected){
+  if (selected == "HR")
+  {
+    document.getElementById("InsertSB").style.display = "none";
+    document.getElementById("InsertHR").style.display = "";
+    document.getElementById("ViewHR").style.display = "";
+  }
+  else if (selected == "SB")
+  {
+    document.getElementById("InsertSB").style.display = "";
+    document.getElementById("InsertHR").style.display = "none";
+    document.getElementById("ViewHR").style.display = "none";
+  }
+}
 
 function showMovie(title) {
   api
@@ -166,5 +230,10 @@ function renderGraph() {
           return d.y;
         });
       });
+
+      $('.node.person').each(function() {
+        var hue = 'rgb(' + (Math.floor((256 - 199) * Math.random()) + 200) + ',' + (Math.floor((256 - 199) * Math.random()) + 200) + ',' + (Math.floor((256 - 199) * Math.random()) + 200) + ')';
+        $(this).css("fill", hue);
+     });
   });
 }
