@@ -60,13 +60,7 @@ function executeQuery()
 
 }
 
-//Function that show the filling Label based on the combo's choice
 
-function showLabel(){
- //document.getElementById(1).style.display ="none";
- //document.getElementsByClassName("row")[1].style.display ="none";
-
-}
 
 function showMovie(title) {
   api
