@@ -7,6 +7,8 @@
     <link rel="stylesheet" href="https://neo4j-documentation.github.io/developer-resources/language-guides/assets/css/main.css">
     <link rel="shortcut icon" href="favicon.ico">
     <title>Covid-19 Tracing</title>
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="-1">
 </head>
 
 <body>
@@ -21,8 +23,8 @@
                         <form role="search" class="navbar-form" id="search">
                             <div class="form-group">
                                 <select id="queryToExecute" class="form-control" name="query">
-                                    <option value="Swab">Insert a new Swab</option>
-                                    <option value="HR">Find all of the subject's high-risk contacts</option>
+                                    <option value="HR" selected>Find all of the subject's high-risk contacts</option>
+                                    <option value="SB">Insert a new Swab</option>
                                 </select>
                                 <!--<input type="text" value="Matrix" placeholder="Search for Movie Title" class="form-control" name="search"> -->
                             </div>
@@ -50,14 +52,14 @@
         </div>
     </div>
 </div>
-
+<div class="row">
 <!--Dati Swab da inserire-->
-<div class="col-md-6" >
-    <div class="panel panel-default" style="display: none;">
+<div class="col-md-6" style="display: none;" id="InsertSB">
+    <div class="panel panel-default">
         <div class="panel-heading">Swab Insert</div>
-        <table id="InsertSB" class="table table-striped table-hover">
+        <table  class="table table-striped table-hover">
             <thead>
-            <tr align="justify">
+            <tr >
                 <th>SSN Person</th>
                 <th>Date</th>
                 <th>Type</th>
@@ -65,61 +67,64 @@
             </tr>
             </thead>
             <tbody>
-                <tr id="InputSB" align="justify">
-                    <input type="text" id="SSN_SB">
-                    <input type="text" id="Date_SB">
-                    <input type="text" id="Type_SB">
-                    <input type="text" id="Outcome_SB">
-                </tr>
+                <form autocomplete="off"><tr id="InputSB">
+                    <td><input type="text" id="SSN_SB" value="603-62-6605"></td>
+                    <td><input type="text" id="Date_SB" value="2021-05-05"></td>
+                    <td><input type="text" id="Type_SB"></td>
+                    <td><input type="text" id="Outcome_SB"></td>
+                </tr></form>
             </tbody>
         </table>
     </div>
 </div>
+ <!-- Visualizzazione Swab
+ <div class="col-md-6" style="display: none;" id="ViewSB">
+    <div class="panel panel-default">
+        <div class="panel-heading">View a new Swab</div>
+        <table class="table table-striped table-hover">
+            <thead>
+            <tr>
+                <th>SSN Person</th>
+                <th>Date</th>
+                <th>Type</th>
+                <th>Outcome</th>
+            </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td id="viewSB_SSN"></td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div> -->
 
 <!--Inserimento HR contact-->
-    <div class="col-md-6" style="display: none;">
+    <div class="col-md-3" id="InsertHR">
         <div class="panel panel-default">
-            <div class="panel-heading">Find all of the subject's high-risk contacts</div>
-            <table id="InsertHR" class="table table-striped table-hover">
+            <div class="panel-heading">Find all of the subject's high-risk contacts (Insertion)</div>
+            <table  class="table table-striped table-hover">
                 <thead>
                 <tr>
-                    <th>SSN Person</th>
-                   
+                    <th class="text-center">SSN Person</th>
+                    <th class="text-center">Swab Date</th>
                 </tr>
                 </thead>
                 <tbody>
-                    <tr id="InputHR">
-                        <input type="text" id="SSN_HR">
+                    <tr id="InputHR" class="text-center">
+                        <td><input type="text" id="SSN_HR" value="603-62-6605"></td>
+                        <td><input type="text" id="SwabDate_HR" value="2021-05-05"></td>
                     </tr>
                 </tbody>
             </table>
         </div>
     </div>
 
- <!-- Visualizzazione Swab-->
-     <div class="col-md-6" style="display: none;">
-        <div class="panel panel-default">
-            <div class="panel-heading">View a new Swab</div>
-            <table id="ViewSB" class="table table-striped table-hover">
-                <thead>
-                <tr>
-                    <th>SSN Person</th>
-                    <th>Date</th>
-                    <th>Type</th>
-                    <th>Outcome</th>
-                </tr>
-                </thead>
-                <tbody>
-                </tbody>
-            </table>
-        </div>
-    </div>
-
 <!-- Per visualizzazione valori dell'HR -->
-    <div class="col-md-6" style="display: none;">
+    <div class="col-md-9" id="ViewHR"> 
         <div class="panel panel-default">
-            <div class="panel-heading">seconda query da visualizzare (HR)</div>
-            <table id="ViewHR" class="table table-striped table-hover">
+            <div class="panel-heading">Find all of the subject's high-risk contacts (View)</div>
+            <table class="table table-striped table-hover" id="ViewHRData">
                 <thead>
                 <tr>
                     <th>SSN</th>
@@ -127,24 +132,33 @@
                     <th>Surname</th>
                     <th>DateofBirth</th>
                     <th>Address</th>
-                    <th>Name</th>
                     <th>phoneNumber</th>
                     <th>email</th>
                 </tr>
                 </thead>
-                <tbody>
+                <tbody id="bodyTableHRView">
+                    <tr>
+                        <td id="SSN_HR_View"></td>
+                        <td id="Name_HR_View"></td>
+                        <td id="Surname_HR_View"></td>
+                        <td id="DateofBirth_HR_View"></td>
+                        <td id="Address_HR_View"></td>
+                        <td id="Surname_HR_View"></td>
+                        <td id="PhoneNumber_HR_View"></td>
+                        <td id="Email_HR_View"></td>
+                    </tr>
                 </tbody>
             </table>
         </div>
     </div>
-
+</div>
 
 
 <style type="text/css">
     .node { stroke: #222; stroke-width: 1.5px; }
     .node.person { fill: #888; }
     .node.activity { fill: #BBB; }
-    .link { stroke: #999; stroke-opacity: .6; stroke-width: 1px; }
+    .link { stroke: rgb(54, 54, 54); stroke-opacity: .6; stroke-width: 1px; }
 </style>
 
 <script type="text/javascript" src="//code.jquery.com/jquery-1.11.0.min.js"></script>
