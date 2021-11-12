@@ -1,4 +1,4 @@
-== Neo4j Movies Application: Quick Start
+== Covid Tracing Project - Group 7
 
 image::https://github.com/neo4j-examples/movies-javascript-bolt/workflows/Node.js%20CI/badge.svg[CI]
 
@@ -74,24 +74,37 @@ After executing the `npm run build` command,  open local file "build/index.html"
 == Application Overview
 
 The application's elements:
-* A combo-box for the choice of the operation to be performed inside the database
+
+* A combo-box for choice the operation to be performed inside the database
 * "Execute" button to execute the selected query
 * "Create or re-initialize" button
 * Table for queries data insert
 * Data Visualization for the second query
 * Background visualization of the graph
 
+== Tracing Covid: Get Started
+
+Click on the button to execute the creation queries of the new database or to re-initialize it randomly and the graph will be shown in the background.
+
 == Command & Queries 
 
 
-
-When running in "dev" mode, navigate to http://localhost:8080/webpack-dev-server/ to see the application.
-
-After executing the `npm run build` command,  open local file "build/index.html" in your browser.
-
-
- sono
+Selecting the operation to perform, the page will show the table for the insert of the relative data, after having filled  the fields click on the button
+"Execute" to perform the operation.
  
 === Insert a new Swab
+
+Fill the table fields with the data for the new Swab: SSN, Execution Date, Type and Outcome.
+
+Afterwards a message of successful insertion will be shown to the user, otherwise an error message (?).
+
+=== Find all of the subject's high-risk contacts
+
+Find all the contacts refer to the people met during the 48h before a positive swab of a Person.
+
+Fill the table fields (SSN and Swab Date) to find all the high-risk contacts related to that Person.
+
+Then all the data of the contacts identified by the query in the database will be shown. 
+
 
 
