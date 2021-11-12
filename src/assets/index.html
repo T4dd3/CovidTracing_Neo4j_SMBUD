@@ -6662,8 +6662,10 @@
         .col-sm-6{
           min-width: 500px !important;
         }
-
-        @media (max-width: 1030px) {
+        .col-md-6{
+          width:100%;
+        }
+        @media (max-width: 1040px) {
           .col-sm-6{
             margin-left:20%;
           }
@@ -6675,14 +6677,22 @@
           .container > .navbar-header, .container > .navbar-collapse{
            margin-top: 20px !important;
           }
-          .SwabDate_HR{
+          #SwabDate_HR{
             width: 100%;
           }
-          .SSN_HR{
+          #SSN_HR{
             width: 100%;
           }
         }
-        @media (min-width: 992px){
+        @media (max-width:1099px){
+          .col-md-3{
+            width: 100%;
+          }
+          .col-md-9{
+            width: 100%;
+          }
+        }
+        @media (min-width: 1100px){
           .col-md-3{
             width: 30%;
           }
@@ -6804,8 +6814,8 @@
                 </thead>
                 <tbody>
                     <tr id="InputHR" class="text-center">
-                        <td><input type="text" class="SSN_HR" value="603-62-6605"></td>
-                        <td><input type="text" class="SwabDate_HR" value="2021-05-05"></td>
+                        <td><input type="text" id="SSN_HR" value="603-62-6605"></td>
+                        <td><input type="text" id="SwabDate_HR" value="2021-05-05"></td>
                     </tr>
                 </tbody>
             </table>
