@@ -1,12 +1,11 @@
-== Neo4j Movies Application: Quick Start
+== Covid Tracing Project - Group 7
 
 image::https://github.com/neo4j-examples/movies-javascript-bolt/workflows/Node.js%20CI/badge.svg[CI]
 
 image::./img/demo.png[image of application]
 
-This example application demonstrates how easy it is to get started with http://neo4j.com/developer[Neo4j] in JavaScript.
 
-It is a very simple web application that uses our Movie graph dataset to provide a search with listing, a detail view and a graph visualization.
+The beta version of the application allows the creation or the re-initializing of the database, the dynamic visualization of the graph, the insertion of a new Swab and to find all the high-risk contacts related to a specific person.
 
 == The Stack
 
@@ -70,3 +69,42 @@ After executing the `npm run build` command,  open local file "build/index.html"
 |NEO4J_DATABASE
 |movies
 |===
+
+
+== Application Overview
+
+The application's elements:
+
+* A combo-box for choice the operation to be performed inside the database
+* "Execute" button to execute the selected query
+* "Create or re-initialize" button
+* Table for queries data insert
+* Data Visualization for the second query
+* Background visualization of the graph
+
+== Tracing Covid: Get Started
+
+Click on the button to execute the creation queries of the new database or to re-initialize it randomly and the graph will be shown in the background.
+
+== Command & Queries 
+
+
+Selecting the operation to perform, the page will show the table for the insert of the relative data, after having filled  the fields click on the button
+"Execute" to perform the operation.
+ 
+=== Insert a new Swab
+
+Fill the table fields with the data for the new Swab: SSN, Execution Date, Type and Outcome.
+
+Afterwards a message of successful insertion will be shown to the user, otherwise an error message (?).
+
+=== Find all of the subject's high-risk contacts
+
+Find all the contacts refer to the people met during the 48h before a positive swab of a Person.
+
+Fill the table fields (SSN and Swab Date) to find all the high-risk contacts related to that Person.
+
+Then all the data of the contacts identified by the query in the database will be shown. 
+
+
+
