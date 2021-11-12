@@ -441,6 +441,11 @@
           font-weight: 200;
           line-height: 1.4;
         }
+        @media (min-width: 768px) {
+          .lead {
+            font-size: 21px;
+          }
+        }
         small,
         .small {
           font-size: 85%;
@@ -687,28 +692,14 @@
         .container:after {
           clear: both;
         }
-        /* GESTIONE DIMENSIONE SCHERMO*/
-        /*@media screen and (max-width: 768px) {
-          body{
-            width: 100% !important;
-          }
+        @media (min-width: 768px) {
           .container {
-            width: 100%;
+            width: 750px;
           }
-          .form-group{
-            width: 98%;
-          } 
-          .navbar-form{
-            padding:1%;
-            width: 100%;
-          }
-        }*/
-        @media (min-width: 769px) {
-          body{
-            width: 100%;
-          }
+        }
+        @media (min-width: 992px) {
           .container {
-            width: 100%;
+            width: 970px;
           }
         }
         @media (min-width: 1200px) {
@@ -1059,7 +1050,6 @@
           }
         }
         @media (min-width: 992px) {
-          
           .col-md-1, .col-md-2, .col-md-3, .col-md-4, .col-md-5, .col-md-6, .col-md-7, .col-md-8, .col-md-9, .col-md-10, .col-md-11, .col-md-12 {
             float: left;
           }
@@ -1633,7 +1623,7 @@
         }
         .form-control {
           display: block;
-          
+          width: 100%;
           height: 34px;
           padding: 6px 12px;
           font-size: 14px;
@@ -3769,6 +3759,9 @@
             display: none;
           }
         }
+        .navbar-nav {
+          margin: 0 -15px 7.5px -15px;
+        }
         .navbar-nav > li > a {
           padding-top: 10px;
           padding-bottom: 10px;
@@ -3822,7 +3815,7 @@
           }
         }
         .navbar-form {
-        
+          margin-left: -15px;
           margin-right: -15px;
           padding: 10px 15px;
           border-top: 1px solid transparent;
@@ -6627,7 +6620,7 @@
         }
         body {
             font-family: 'Open Sans', Arial !important;
-           
+            min-width: 1920px !important;
         }
         .container{
           width: 100% !important;
@@ -6654,60 +6647,19 @@
           background-color: #ffebeb;
           border-color: #dddddd;
         }
-        .navbar-header {
-          min-width: 500px !important;
-        }
-        .col-md-6{
-          min-width: 500px !important;
-        }
-        .col-sm-6{
-          min-width: 500px !important;
-        }
-
-        @media (max-width: 1030px) {
-          .col-sm-6{
-            margin-left:20%;
-          }
-          .container > .navbar-header, .container > .navbar-collapse {
-            margin-left: 20%;
-          }
-        }
-        @media (min-width: 768px) {
-          .col-md-3{
-            width: 30%;
-          }
-          .col-md-9{
-            width: 70%;
-          }
-        }
-        @media (max-width: 768px) {
-          .col-sm-6{
-            margin-left:20%;
-          }
-          .container > .navbar-header, .container > .navbar-collapse {
-            margin-left: 20%;
-          }
-        }
     </style>
     <link rel="shortcut icon" href="favicon.ico">
     <title>Covid-19 Tracing</title>
     <meta http-equiv="Pragma" content="no-cache">
     <meta http-equiv="Expires" content="-1">
-</head>
+<script defer src="app.js"></script></head>
 
 <body>
 <div id="graph">
 </div>
 <div role="navigation" class="navbar navbar-default navbar-static-top">
     <div class="container">
-          <div class="navbar-header col-sm-6 col-md-6">
-                <div class="logo-well">
-                        <img src="https://raw.githubusercontent.com/T4dd3/CovidTracing_Neo4j_SMBUD/main/src/assets/images/logo.webp" id="logo">
-                </div>
-                <div class="navbar-brand">
-                    <div class="brand">Group 7 - SMBUD Project Neo4J - Tracing Covid</div>
-                </div>
-            </div>
+        
             <div class="col-sm-6 col-md-6">
                 <ul class="nav navbar-nav">
                     <li>
@@ -6730,7 +6682,14 @@
                     </li>
                 </ul>
             </div>
-           
+            <div class="navbar-header col-sm-6 col-md-6">
+                <div class="logo-well">
+                        <img src="https://raw.githubusercontent.com/T4dd3/CovidTracing_Neo4j_SMBUD/main/src/assets/images/logo.webp" id="logo">
+                </div>
+                <div class="navbar-brand">
+                    <div class="brand">Group 7 - SMBUD Project Neo4J - Tracing Covid</div>
+                </div>
+            </div>
         
     </div>
 </div>
