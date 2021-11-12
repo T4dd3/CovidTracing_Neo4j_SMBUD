@@ -22,6 +22,10 @@ Provision a database quickly with https://sandbox.neo4j.com/?usecase=movies[Neo4
 
 === Setup
 
+There some guidelines to execute the web application.
+
+. Install https://neo4j.com/download-center/#community[Neo4j Server]
+
 [source,bash]
 ----
 $ npm install
@@ -105,6 +109,9 @@ Find all the contacts refer to the people met during the 48h before a positive s
 Fill the table fields (SSN and Swab Date) to find all the high-risk contacts related to that Person.
 
 Then all the data of the contacts identified by the query in the database will be shown. 
+
+. prova
+. secondo
 
 
 
