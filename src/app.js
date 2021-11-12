@@ -31,6 +31,7 @@ function createDB()
   api.createDB().then(res => {
     console.log(res);
     alert("Database successfully created and initialized!");
+    window.location.reload();
     // In res ci sono tutte le statistiche delle query (nodi creati, relazioni create, label aggiunte,..), ogni proprietà è una query che è stata eseguita
     // res.nodePersons._p.then((res) => console.log(res.summary.counters._stats))
   })
