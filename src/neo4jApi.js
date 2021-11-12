@@ -30,16 +30,16 @@ function createDB()
 
   var stats = {};
   stats.deletion = creationTx.run('MATCH(n) DETACH DELETE n;');
-  stats.nodePerson = creationTx.run("LOAD CSV FROM 'https://cdn.filesend.jp/private/68Y4UingReJyhBmH7Ps3rQ-tbelgXlh11hKaXO2h-RdiVTfH-F_FKQf6Cu9-zlDu/PersonData.csv' AS line \
+  stats.nodePerson = creationTx.run("LOAD CSV FROM 'https://raw.githubusercontent.com/T4dd3/CovidTracing_Neo4j_SMBUD/main/data/PersonData.csv' AS line \
     CREATE (:Person {ssn:line[1], name: line[2], lastname: line[3], email: line[4], gender: line[5],birth_date: date(line[6]), address:line[7], phone_number: toInteger(line[8])});");
-  stats.nodeSwab = creationTx.run("LOAD CSV FROM 'https://cdn.filesend.jp/private/rNgDy3_f0m2t3276d9LUrmXmll8t4y9QRnyINaVqOR-M4hsEbzTO04-EmlnSFfaK/SwabData.csv' AS line \
+  stats.nodeSwab = creationTx.run("LOAD CSV FROM 'https://raw.githubusercontent.com/T4dd3/CovidTracing_Neo4j_SMBUD/main/data/SwabData.csv' AS line \
   CREATE (:Swab {date: date(line[2]), outcome: line[3], type: line[1]});");
-  stats.nodeVaccine = creationTx.run("LOAD CSV FROM 'https://cdn.filesend.jp/private/0jvHvnXZbCtjzcmzUYZd_XVfEjW4hcy1BTrOiKmCmUl5XUxekXDcaUkYAH1Dmn05/Vaccine.csv' AS line \
+  stats.nodeVaccine = creationTx.run("LOAD CSV FROM 'https://raw.githubusercontent.com/T4dd3/CovidTracing_Neo4j_SMBUD/main/data/Vaccine.csv' AS line \
   CREATE (:VaccineShot {type:line[1], date: date(line[2]), numberOfTheShot: toInteger(line[3]), lot:line[4]});");
-  stats.nodeActivity = creationTx.run("LOAD CSV FROM 'https://cdn.filesend.jp/private/TUDQA6cqmOwadKYKqkanrvrNIX-Eemy9quaKsQN05niebsTuUy1HyHCpz0oR-qCb/Activity.csv' AS line \
+  stats.nodeActivity = creationTx.run("LOAD CSV FROM 'https://raw.githubusercontent.com/T4dd3/CovidTracing_Neo4j_SMBUD/main/data/Activity.csv' AS line \
   CREATE (:Activity {type:line[1], description: line[2], averageDuration: toInteger(line[3]), endTime: time(line[4]), address: line[5]});");
   stats.relPersonSwab = creationTx.run("match (p:Person),(s:Swab) with p,s limit 500000000 where rand() < 0.002 merge (p)-[:TAKES]->(s);");
-  stats.dates = creationTx.run("LOAD CSV FROM 'https://cdn.filesend.jp/private/lb-o4G0YqdDgduNvXEbu7UJARlHJfN9r2p41P5T8IgS54BcyXPQx5fOP8GaR1orT/Date.csv' AS line \
+  stats.dates = creationTx.run("LOAD CSV FROM 'https://raw.githubusercontent.com/T4dd3/CovidTracing_Neo4j_SMBUD/main/data/Date.csv' AS line \
     CREATE (:Date {date: date(line[1]),time:time(line[2])})");
     // stats.nodes = creationTx.run('CREATE (ma:Person { name: "Mark" }), (mi:Person { name: "Mike" }), (ee:Person { name: "Francis", from: "Italy", klout: 99});');
   // stats.relations = creationTx.run('MATCH (a:Person), (b:Person) WHERE NOT (a)-[:KNOWS]->(b) CREATE (a)-[:KNOWS]->(b), (b)-[:KNOWS]->(a);');
