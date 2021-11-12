@@ -182,7 +182,7 @@ table {
 @media print {
   * {
     text-shadow: none !important;
-    color: rgb(206, 67, 67) !important;
+    color: #000 !important;
     background: transparent !important;
     box-shadow: none !important;
   }
