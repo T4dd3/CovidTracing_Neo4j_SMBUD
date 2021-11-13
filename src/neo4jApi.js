@@ -1,6 +1,4 @@
 require('file-loader?name=[name].[ext]!../node_modules/neo4j-driver/lib/browser/neo4j-web.min.js');
-const Movie = require('./models/Movie');
-const MovieCast = require('./models/MovieCast');
 const _ = require('lodash');
 const Person = require('./models/Person');
 
@@ -95,65 +93,6 @@ function executeQuery(selectedQuery, parameters) {
   }
 }
 
-function searchMovies(queryString) {
-  const session = driver.session({database: database});
-  return session.readTransaction((tx) =>
-      tx.run('MATCH (movie:Movie) \
-      WHERE movie.title =~ $title \
-      RETURN movie',
-      {title: '(?i).*' + queryString + '.*'})
-    )
-    .then(result => {
-      return result.records.map(record => {
-        return new Movie(record.get('movie'));
-      });
-    })
-    .catch(error => {
-      throw error;
-    })
-    .finally(() => {
-      return session.close();
-    });
-}
-
-function getMovie(title) {
-  const session = driver.session({database: database});
-  return session.readTransaction((tx) =>
-      tx.run("MATCH (movie:Movie {title:$title}) \
-      OPTIONAL MATCH (movie)<-[r]-(person:Person) \
-      RETURN movie.title AS title, \
-      collect([person.name, \
-           head(split(toLower(type(r)), '_')), r.roles]) AS cast \
-      LIMIT 1", {title}))
-    .then(result => {
-      if (_.isEmpty(result.records))
-        return null;
-
-      const record = result.records[0];
-      return new MovieCast(record.get('title'), record.get('cast'));
-    })
-    .catch(error => {
-      throw error;
-    })
-    .finally(() => {
-      return session.close();
-    });
-}
-
-function voteInMovie(title) {
-  const session = driver.session({ database: database });
-  return session.writeTransaction((tx) =>
-      tx.run("MATCH (m:Movie {title: $title}) \
-        WITH m, (CASE WHEN exists(m.votes) THEN m.votes ELSE 0 END) AS currentVotes \
-        SET m.votes = currentVotes + 1;", { title }))
-    .then(result => {
-      return result.summary.counters.updates().propertiesSet
-    })
-    .finally(() => {
-      return session.close();
-    });
-}
-
 function myGetGraph() {
   const session = driver.session({database: database});
   return session.readTransaction((tx) =>
@@ -191,9 +130,6 @@ function myGetGraph() {
     });
 }
 
-exports.searchMovies = searchMovies;
-exports.getMovie = getMovie;
-exports.voteInMovie = voteInMovie;
 exports.executeQuery = executeQuery;
 exports.myGetGraph = myGetGraph;
 exports.createDB = createDB;

@@ -127,61 +127,6 @@ function changeShowed(selected){
   }
 }
 
-function showMovie(title) {
-  api
-    .getMovie(title)
-    .then(movie => {
-      if (!movie) return;
-
-      $("#title").text(movie.title);
-      $("#poster").attr("src","https://neo4j-documentation.github.io/developer-resources/language-guides/assets/posters/"+encodeURIComponent(movie.title)+".jpg");
-      const $list = $("#crew").empty();
-      movie.cast.forEach(cast => {
-        $list.append($("<li>" + cast.name + " " + cast.job + (cast.job === "acted" ? " as " + cast.role : "") + "</li>"));
-      });
-      $("#vote")
-        .unbind("click")
-        .click(function () {
-          voteInMovie(movie.title)
-        })
-    }, "json");
-}
-
-function voteInMovie(title) {
-  api.voteInMovie(title)
-    .then(() => search(false))
-    .then(() => showMovie(title));
-}
-
-function search(showFirst = true) {
-  const query = $("#search").find("input[name=search]").val();
-  api
-    .searchMovies(query)
-    .then(movies => {
-      const t = $("table#results tbody").empty();
-
-      if (movies) {
-        movies.forEach((movie, index) => {
-          $('<tr>' + 
-              `<td class='movie'>${movie.title}</td>` + 
-              `<td>${movie.released}</td>` +
-              `<td>${movie.tagline}</td>` + 
-              `<td id='votes${index}'>${movie.votes}</td>` +
-            '</tr>')
-            .appendTo(t)
-            .click(function() {
-              showMovie($(this).find("td.movie").text());
-            })
-        });
-
-        const first = movies[0];
-        if (first && showFirst) {
-          return showMovie(first.title);
-        }
-      }
-    });
-}
-
 function renderGraph() {
   const width = 800, height = 800;
   const force = d3.layout.force()
