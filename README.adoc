@@ -5,7 +5,7 @@ image::https://github.com/neo4j-examples/movies-javascript-bolt/workflows/Node.j
 image::./img/homepage.PNG[HomePage]
 
 
-The beta version of the application allows the creation or the re-initializing of the database, the dynamic visualization of the graph, the insertion of a new Swab and to find all the high-risk contacts related to a specific person.
+The beta version of the application allows the creation or the re-initializing of the database, the dynamic visualization of the graph, the insertion of a new Swab, show 100 person that have most recent contact and find all the high-risk contacts related to a specific person.
 
 == Quickstart
 
@@ -16,21 +16,20 @@ There some guidelines to execute the web application.
 . Install https://neo4j.com/download-center/#community[Neo4j Server]
 . Add to folder \neo4j-community-4.x\plugins the package  https://github.com/neo4j-contrib/neo4j-apoc-procedures/releases/download/4.3.0.3/apoc-4.3.0.3-core.jar[apoc.coll]
 . In case of problems authentication is necessary to uncomment the follow line on the \neo4j-community-4.x\conf\neo4j.conf file
-[source,bash]
- ----
- # Whether requests to Neo4j are authenticated.
- # To disable authentication, uncomment this line
- dbms.security.auth_enabled=false
- ----
+
+  # Whether requests to Neo4j are authenticated.
+  # To disable authentication, uncomment this line
+  dbms.security.auth_enabled=false
+
+  
 . Start Neo4j locally and open the http://localhost:7474[Neo4j Browser]
 . Clone this project from GitHub
 . Run the App inside the Webpack Dev Server (some dependencies may need to be installed):
 
- [source,bash]
- ----
+
  # run in development mode (refreshes the app on source code changes)
  $ npm run start
- ----
+
 
 . Finally navigate to http://localhost:8080 to see the application.
 
@@ -85,6 +84,10 @@ Selecting the operation to perform, the page will show the table for the insert 
 Fill the table fields with the data for the new Swab: SSN, Execution Date, Type and Outcome.
 
 Afterwards a message of successful insertion will be shown to the user
+
+=== Show 100 peoples has a most recent contact
+
+Show all the data related to 100 person that have a most recent contact deteched by the application of contact-tracing.
 
 === Find all of the subject's high-risk contacts
 
