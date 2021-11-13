@@ -13,6 +13,7 @@ let database = process.env.NEO4J_DATABASE;
 if (!neo4jVersion.startsWith("4")) {
   database = null;
 }
+
 const driver = neo4j.driver(
     neo4jUri,
     neo4j.auth.basic(process.env.NEO4J_USER, process.env.NEO4J_PASSWORD),
