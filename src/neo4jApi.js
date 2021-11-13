@@ -91,7 +91,7 @@ function executeQuery(selectedQuery, parameters) {
   }
   else if (selectedQuery == "ALL") {
     return session.readTransaction((tx) =>
-      tx.run('MATCH (p:Person)-[r:APP_REGISTERED_CONTACT]->(:Person) RETURN p LIMIT(100)')
+      tx.run('MATCH (p:Person)-[r:APP_REGISTERED_CONTACT]->(:Person) RETURN DISTINCT p LIMIT(100)')
     )
       .then(result => {
         // Each record will have a person associated, I'll get that person
