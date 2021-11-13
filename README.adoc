@@ -1,8 +1,8 @@
 == Covid Tracing Project - Group 7
 
-image::https://github.com/T4dd3/CovidTracing_Neo4j_SMBUD/raw/main/img/homepge.PNG[CI]
+image::https://github.com/neo4j-examples/movies-javascript-bolt/workflows/Node.js%20CI/badge.svg[CI]
 
-image::./img/demo.png[image of application]
+image::./raw/main/img/homepge.PNG[HomePage]
 
 
 The beta version of the application allows the creation or the re-initializing of the database, the dynamic visualization of the graph, the insertion of a new Swab and to find all the high-risk contacts related to a specific person.
