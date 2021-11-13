@@ -113,7 +113,7 @@ function myGetGraph() {
   return session.readTransaction((tx) =>
     tx.run('MATCH (p:Person)-[:APP_REGISTERED_CONTACT]->(a:Person) \
     RETURN p.name AS p, collect(a.name) AS regContact \
-    LIMIT $limit', { limit: neo4j.int(100) }))
+    LIMIT $limit', { limit: neo4j.int(25) }))
     .then(results => {
       const nodes = [], rels = [];
       let i = 0;
