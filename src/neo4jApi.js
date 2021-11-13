@@ -45,7 +45,7 @@ function createDB() {
   stats.relPersonSecondVaccine = creationTx.run("WITH range(1,1) as VaccineRange MATCH (v:VaccineShot) where v.numberOfTheShot= 2 WITH collect(v) as vaccines, VaccineRange MATCH (p:Person)-[:GETS]->(v1:VaccineShot) where rand() < 0.5 and v1.numberOfTheShot= 1  WITH p, apoc.coll.randomItems(vaccines, apoc.coll.randomItem(VaccineRange)) as vaccines  FOREACH (x in vaccines | CREATE (p)-[:GETS]->(x))");
   stats.relPersonThirdVaccine = creationTx.run("WITH range(1,1) as VaccineRange MATCH (v:VaccineShot) where v.numberOfTheShot = 3 WITH collect(v) as vaccines, VaccineRange MATCH (p:Person)-[:GETS]->(v1:VaccineShot) where rand() < 0.1 and v1.numberOfTheShot= 2  WITH p, apoc.coll.randomItems(vaccines, apoc.coll.randomItem(VaccineRange)) as vaccines  FOREACH (x in vaccines | CREATE (p)-[:GETS]->(x))");
   stats.relLivesWith = creationTx.run("match (p1:Person),(p2:Person)  with p1,p2  limit 1500000000   where p1.name<>p2.name and p1.address = p2.address    merge (p1)<-[:LIVES_WITH]->(p2);");
-  stats.relAppRegisteredContact = creationTx.run("match (p1:Person),(p2:Person),(d:Date)  with p1,p2,d  limit 1500000   where rand()<0.0003 and p2.name<>p1.name    merge (p1)<-[:APP_REGISTERED_CONTACT{date:d.date,time:d.time}]->(p2);");
+  stats.relAppRegisteredContact = creationTx.run("match (p1:Person),(p2:Person),(d:Date)  with p1,p2,d  limit 1500000   where rand()<0.003 and p2.name<>p1.name    merge (p1)<-[:APP_REGISTERED_CONTACT{date:d.date,time:d.time}]->(p2);");
   stats.relTakesPartIn = creationTx.run("match (p:Person),(a:Activity),(d:Date)  with p,a,d  limit 1500000   where rand()<0.0003     merge (p)<-[:TAKES_PART_IN{date:d.date,time:d.time}]->(a);");
 
   return creationTx.commit().then(() => { return stats; }).
@@ -60,7 +60,7 @@ function executeQuery(selectedQuery, parameters) {
 
   if (selectedQuery == "HR") {
     return session.readTransaction((tx) =>
-      tx.run('MATCH (P1:Person)-[AR:APP_REGISTERED_CONTACT]-(P2:Person) WHERE P1.ssn = \'' + parameters.ssn + '\' AND P2.ssn<>P1.ssn AND  duration.inDays(AR.date,date("' + parameters.swabDate + '")).days <= 2 AND duration.inDays(AR.date,date("' + parameters.swabDate + '")).days >= 0 RETURN P2')
+      tx.run('MATCH (P1:Person)-[AR:APP_REGISTERED_CONTACT]-(P2:Person) WHERE P1.ssn = \'' + parameters.ssn + '\' AND P2.ssn<>P1.ssn AND  duration.inDays(AR.date,date("' + parameters.swabDate + '")).days <= 2 AND duration.inDays(AR.date,date("' + parameters.swabDate + '")).days >= 0 RETURN P2 AS p')
     )
       .then(result => {
         // Each record will have a person associated, I'll get that person
