@@ -72,7 +72,7 @@ function executeQuery()
   var selectedQuery = document.getElementById("queryToExecute").value;
   var parameters = {};
 
-  if(selectedQuery=="HR"){
+  if(selectedQuery=="HR" || selectedQuery=="ALL"){
     var parameters = {};
     parameters.ssn = document.getElementById("SSN_HR").value;
     parameters.swabDate = document.getElementById("SwabDate_HR").value;
@@ -86,7 +86,7 @@ function executeQuery()
   }
   console.log(selectedQuery, parameters);
   api.executeQuery(selectedQuery, parameters).then(result => {
-    if(selectedQuery=="HR"){
+    if(selectedQuery=="HR" || selectedQuery =="ALL"){
       document.getElementById("bodyTableHRView").innerHTML = "";
       result.forEach(val => {
         //sconsole.log(val);
@@ -101,6 +101,7 @@ function executeQuery()
         </tr>"
       });
       ViewHRPagination();
+      renderGraph()
     }
     else if (selectedQuery == "SB")
       alert(result);
@@ -113,7 +114,13 @@ function executeQuery()
 
 //Function that show the filling Label based on the combo's choice
 function changeShowed(selected){
-  if (selected == "HR")
+  if (selected =="ALL")
+  {
+    document.getElementById("InsertSB").style.display = "none";
+    document.getElementById("InsertHR").style.display = "none";
+    document.getElementById("ViewHR").style.display = "";
+  }
+  else if (selected == "HR")
   {
     document.getElementById("InsertSB").style.display = "none";
     document.getElementById("InsertHR").style.display = "";
@@ -128,6 +135,7 @@ function changeShowed(selected){
 }
 
 function renderGraph() {
+  document.getElementById("graph").innerHTML = "";
   const width = 800, height = 800;
   const force = d3.layout.force()
     .charge(-200).linkDistance(30).size([width, height]);

@@ -15,16 +15,15 @@ if (!neo4jVersion.startsWith("4")) {
 }
 
 const driver = neo4j.driver(
-    neo4jUri,
-    neo4j.auth.basic(process.env.NEO4J_USER, process.env.NEO4J_PASSWORD),
+  neo4jUri,
+  neo4j.auth.basic(process.env.NEO4J_USER, process.env.NEO4J_PASSWORD),
 );
 
 console.log(`Database running at ${neo4jUri}`)
 
 /* I'll clean the old db and create a new one from csv data*/
-function createDB() 
-{
-  const session = driver.session({database: database});
+function createDB() {
+  const session = driver.session({ database: database });
   const creationTx = session.beginTransaction();
 
   var stats = {};
@@ -40,7 +39,7 @@ function createDB()
   stats.relPersonSwab = creationTx.run("match (p:Person),(s:Swab) with p,s limit 500000000 where rand() < 0.002 merge (p)-[:TAKES]->(s);");
   stats.dates = creationTx.run("LOAD CSV FROM 'https://raw.githubusercontent.com/T4dd3/CovidTracing_Neo4j_SMBUD/main/data/Date.csv' AS line \
     CREATE (:Date {date: date(line[1]),time:time(line[2])})");
-    // stats.nodes = creationTx.run('CREATE (ma:Person { name: "Mark" }), (mi:Person { name: "Mike" }), (ee:Person { name: "Francis", from: "Italy", klout: 99});');
+  // stats.nodes = creationTx.run('CREATE (ma:Person { name: "Mark" }), (mi:Person { name: "Mike" }), (ee:Person { name: "Francis", from: "Italy", klout: 99});');
   // stats.relations = creationTx.run('MATCH (a:Person), (b:Person) WHERE NOT (a)-[:KNOWS]->(b) CREATE (a)-[:KNOWS]->(b), (b)-[:KNOWS]->(a);');
   stats.relPersonFirstVaccine = creationTx.run("WITH range(1,1) as VaccineRange MATCH (v:VaccineShot) where v.numberOfTheShot = 1 WITH collect(v) as vaccines, VaccineRange MATCH (p:Person) where rand() < 0.8  WITH p, apoc.coll.randomItems(vaccines, apoc.coll.randomItem(VaccineRange)) as vaccines  FOREACH (x in vaccines | CREATE (p)-[:GETS]->(x))");
   stats.relPersonSecondVaccine = creationTx.run("WITH range(1,1) as VaccineRange MATCH (v:VaccineShot) where v.numberOfTheShot= 2 WITH collect(v) as vaccines, VaccineRange MATCH (p:Person)-[:GETS]->(v1:VaccineShot) where rand() < 0.5 and v1.numberOfTheShot= 1  WITH p, apoc.coll.randomItems(vaccines, apoc.coll.randomItem(VaccineRange)) as vaccines  FOREACH (x in vaccines | CREATE (p)-[:GETS]->(x))");
@@ -48,7 +47,7 @@ function createDB()
   stats.relLivesWith = creationTx.run("match (p1:Person),(p2:Person)  with p1,p2  limit 1500000000   where p1.name<>p2.name and p1.address = p2.address    merge (p1)<-[:LIVES_WITH]->(p2);");
   stats.relAppRegisteredContact = creationTx.run("match (p1:Person),(p2:Person),(d:Date)  with p1,p2,d  limit 1500000   where rand()<0.0003 and p2.name<>p1.name    merge (p1)<-[:APP_REGISTERED_CONTACT{date:d.date,time:d.time}]->(p2);");
   stats.relTakesPartIn = creationTx.run("match (p:Person),(a:Activity),(d:Date)  with p,a,d  limit 1500000   where rand()<0.0003     merge (p)<-[:TAKES_PART_IN{date:d.date,time:d.time}]->(a);");
-  
+
   return creationTx.commit().then(() => { return stats; }).
     catch(error => { throw error; }).
     finally(() => { return session.close(); });
@@ -57,18 +56,17 @@ function createDB()
 
 /* To execute query requested by the user and return a response */
 function executeQuery(selectedQuery, parameters) {
-  const session = driver.session({database: database});
-  
+  const session = driver.session({ database: database });
+
   if (selectedQuery == "HR") {
     return session.readTransaction((tx) =>
-          tx.run('MATCH (p:Person) RETURN p LIMIT(100)')
-          //tx.run('MATCH (P1:Person)-[LW:LIVES_WITH]-(P2:Person) WHERE P1.ssn = '+parameters.ssn+' AND P2.ssn<>P1.ssn AND LW.endDate IS NULL OR duration.inDays(LW.endDate,'+parameters.swabDate+').days <= 14 RETURN P2')
-      )
+      tx.run('MATCH (P1:Person)-[AR:APP_REGISTERED_CONTACT]-(P2:Person) WHERE P1.ssn = \'' + parameters.ssn + '\' AND P2.ssn<>P1.ssn AND  duration.inDays(AR.date,date("' + parameters.swabDate + '")).days <= 2 AND duration.inDays(AR.date,date("' + parameters.swabDate + '")).days >= 0 RETURN P2')
+    )
       .then(result => {
-          // Each record will have a person associated, I'll get that person
-          return result.records.map(recordFromDB => {
-            return new Person(recordFromDB.get("p"));
-          });
+        // Each record will have a person associated, I'll get that person
+        return result.records.map(recordFromDB => {
+          return new Person(recordFromDB.get("p"));
+        });
       })
       .catch(error => {
         throw error;
@@ -77,51 +75,67 @@ function executeQuery(selectedQuery, parameters) {
         return session.close();
       });
   }
-  else if (selectedQuery == "SB") 
-  {
+  else if (selectedQuery == "SB") {
     return session.writeTransaction((tx) => {
-      tx.run('CREATE (S:Swab {date: date(\''+parameters.date+'\'), outcome: \''+parameters.outcome+'\', type: \''+parameters.type+'\'}) WITH S MATCH (P:Person) WHERE P.ssn = \''+parameters.ssn+'\' MERGE (P)<-[:TAKES]->(S)')
+      tx.run('CREATE (S:Swab {date: date(\'' + parameters.date + '\'), outcome: \'' + parameters.outcome + '\', type: \'' + parameters.type + '\'}) WITH S MATCH (P:Person) WHERE P.ssn = \'' + parameters.ssn + '\' MERGE (P)<-[:TAKES]->(S)')
     })
-    .then(result => {
+      .then(result => {
         return "Successfully added swab to ssn: " + parameters.ssn;
-    })
-    .catch(error => {
-      throw error;
-    })
-    .finally(() => {
-      return session.close();
-    });
+      })
+      .catch(error => {
+        throw error;
+      })
+      .finally(() => {
+        return session.close();
+      });
+  }
+  else if (selectedQuery == "ALL") {
+    return session.readTransaction((tx) =>
+      tx.run('MATCH (p:Person)-[r:APP_REGISTERED_CONTACT]->(:Person) RETURN p LIMIT(100)')
+    )
+      .then(result => {
+        // Each record will have a person associated, I'll get that person
+        return result.records.map(recordFromDB => {
+          return new Person(recordFromDB.get("p"));
+        });
+      })
+      .catch(error => {
+        throw error;
+      })
+      .finally(() => {
+        return session.close();
+      });
   }
 }
 
 function myGetGraph() {
-  const session = driver.session({database: database});
+  const session = driver.session({ database: database });
   return session.readTransaction((tx) =>
     tx.run('MATCH (p:Person)-[:APP_REGISTERED_CONTACT]->(a:Person) \
     RETURN p.name AS p, collect(a.name) AS regContact \
-    LIMIT $limit', {limit: neo4j.int(100)}))
+    LIMIT $limit', { limit: neo4j.int(100) }))
     .then(results => {
       const nodes = [], rels = [];
       let i = 0;
       results.records.forEach(res => {
-        nodes.push({name: res.get('p'), label: 'person'});
+        nodes.push({ name: res.get('p'), label: 'person' });
         const target = i;
         i++;
 
         res.get('regContact').forEach(name => {
-          const regContactPerson = {name: name, label: 'person'};
+          const regContactPerson = { name: name, label: 'person' };
           let source = _.findIndex(nodes, regContactPerson);
           if (source === -1) {
             nodes.push(regContactPerson);
             source = i;
             i++;
           }
-          rels.push({source, target})
+          rels.push({ source, target })
         })
-        
+
       });
 
-      return {nodes, links: rels};
+      return { nodes, links: rels };
     })
     .catch(error => {
       throw error;

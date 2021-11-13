@@ -6754,7 +6754,8 @@
                         <form role="search" class="navbar-form" id="search">
                             <div class="form-group">
                                 <select id="queryToExecute" class="form-control" name="query">
-                                    <option value="HR" selected>Find all of the subject's high-risk contacts</option>
+                                    <option value="ALL" selected>Show 100 peoples has a most recent contact</option>
+                                    <option value="HR">Find all of the subject's high-risk contacts</option>
                                     <option value="SB">Insert a new Swab</option>
                                 </select>
                                 <!--<input type="text" value="Matrix" placeholder="Search for Movie Title" class="form-control" name="search"> -->
@@ -6822,7 +6823,7 @@
 </div> -->
 
 <!--Inserimento HR contact-->
-    <div class="col-md-3" id="InsertHR">
+    <div class="col-md-3" id="InsertHR" style="display: none;">
         <div class="panel panel-default">
             <div class="panel-heading">Find all of the subject's high-risk contacts (Insertion)</div>
             <table  class="table table-striped table-hover">
@@ -6843,7 +6844,7 @@
     </div>
 
 <!-- Per visualizzazione valori dell'HR -->
-    <div class="col-md-9" id="ViewHR"> 
+    <div class="col-md-9" id="ViewHR" style="display: none;"> 
         <div class="panel panel-default">
             <div class="panel-heading">Find all of the subject's high-risk contacts (View)</div>
             <table class="table table-striped table-hover" id="ViewHRData">
