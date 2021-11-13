@@ -15,7 +15,7 @@ There some guidelines to execute the web application.
 
 . Install https://neo4j.com/download-center/#community[Neo4j Server]
 . Add to folder \neo4j-community-4.x\plugins the package  https://github.com/neo4j-contrib/neo4j-apoc-procedures/releases/download/4.3.0.3/apoc-4.3.0.3-core.jar[apoc.coll]
-. In case of problems authentication is necessary to uncomment the follow line on the \neo4j-community-4.x\conf\neo4j.conf file
+. Is necessary to uncomment the follow line on the \neo4j-community-4.x\conf\neo4j.conf file for the possible problem of authentication
 
   # Whether requests to Neo4j are authenticated.
   # To disable authentication, uncomment this line
