@@ -2,21 +2,10 @@
 
 image::https://github.com/neo4j-examples/movies-javascript-bolt/workflows/Node.js%20CI/badge.svg[CI]
 
-image::./raw/main/img/homepage.PNG[HomePage]
+image::./img/homepage.PNG[HomePage]
 
 
 The beta version of the application allows the creation or the re-initializing of the database, the dynamic visualization of the graph, the insertion of a new Swab and to find all the high-risk contacts related to a specific person.
-
-== The Stack
-
-These are the components of our Web Application:
-
-* Application Type:         JavaScript-Web Application
-* Neo4j Database Connector: https://github.com/neo4j/neo4j-javascript-driver[Neo4j JavaScript Driver] for Cypher https://neo4j.com/developer/javascript[Docs]
-* Database:                 Neo4j-Server (4.x) with multi-database
-* Frontend:                 jquery, bootstrap, https://d3js.org/[d3.js]
-
-Provision a database quickly with https://sandbox.neo4j.com/?usecase=movies[Neo4j Sandbox] or https://neo4j.com/cloud/aura/[Neo4j Aura].
 
 == Quickstart
 
@@ -65,13 +54,13 @@ After executing the `npm run build` command,  open local file "build/index.html"
 |neo4j+s://demo.neo4jlabs.com
 
 |NEO4J_USER
-|movies
+|neo4j
 
 |NEO4J_PASSWORD
-|movies
+|neo4j
 
 |NEO4J_DATABASE
-|movies
+|neo4j
 |===
 
 
