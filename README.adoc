@@ -2,7 +2,7 @@
 
 image::https://github.com/neo4j-examples/movies-javascript-bolt/workflows/Node.js%20CI/badge.svg[CI]
 
-image::./raw/main/img/homepage.PNG[HomePage]
+image::./img/homepage.PNG[HomePage]
 
 
 The beta version of the application allows the creation or the re-initializing of the database, the dynamic visualization of the graph, the insertion of a new Swab and to find all the high-risk contacts related to a specific person.
