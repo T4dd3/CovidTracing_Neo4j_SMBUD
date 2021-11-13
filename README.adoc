@@ -1,6 +1,6 @@
 == Covid Tracing Project - Group 7
 
-image::https://github.com/neo4j-examples/movies-javascript-bolt/workflows/Node.js%20CI/badge.svg[CI]
+image::https://github.com/T4dd3/CovidTracing_Neo4j_SMBUD/raw/main/img/homepge.PNG[CI]
 
 image::./img/demo.png[image of application]
 
